@@ -1,4 +1,4 @@
-Groq Chat App
+## Groq Chat App
 Overview
 The Groq Chat App is a simple Streamlit-based web application that integrates with the Groq API for AI-driven conversations. This app allows users to interact with a language model (LLM) such as Mixtral-8x7b-32768 or Llama2-70b-4096, providing a conversational interface. The app uses the LangChain library for managing conversation history and integrating different LLMs.
 
