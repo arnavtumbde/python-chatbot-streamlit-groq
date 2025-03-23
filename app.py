@@ -1,80 +1,87 @@
 import streamlit as st
 import os
-from groq import Groq
-import random
 from langchain.chains import ConversationChain
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain_groq import ChatGroq
-from langchain.prompts import PromptTemplate
 from dotenv import load_dotenv
-import os 
 
+# Load environment variables first
 load_dotenv()
 
-groq_api_key = os.environ['GROQ_API_KEY']
+# Get API Key
+groq_api_key = os.getenv("GROQ_API_KEY")  # ✅ Fix: Use os.getenv() to avoid errors
 
-def main():
-    # Customizing UI with background, emojis, and colors #f0f0f0
-    st.markdown(
-        """
-        <style>
-        .reportview-container {
-            background-image: url('https://link_to_your_image.jpg');
-            background-size: cover;
-        }
-        h1 {
-            color: #4284f5;
-            font-size: 40px;
-            font-weight: bold;
-        }
-        .sidebar .sidebar-content {
-            background-color: #a9e670; 
-        }
-        </style>
-        """, unsafe_allow_html=True
-    )
-    
-    st.title("Groq Chat App 🤖💬")
+# Customizing UI
+st.markdown(
+    """
+    <style>
+    .reportview-container {
+        background-image: url('https://images.wallpapersden.com/image/download/surreal-psychedelic-landscape-amazing-ai-art_bmdlam6UmZqaraWkpJRobWllrWdma2U.jpg');
+        background-size: cover;
+    }
+    h1 {
+        color: #4284f5;
+        font-size: 40px;
+        font-weight: bold;
+    }
+    .sidebar .sidebar-content {
+        background-color: #a9e670; 
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-    # Sidebar
-    st.sidebar.title('Select an LLM 🔍')
-    model = st.sidebar.selectbox(
-        'Choose a model 🤖',
-        ['mixtral-8x7b-32768', 'llama2-70b-4096'],
-        format_func=lambda x: f"{x} 🧠"
-    )
-    conversational_memory_length = st.sidebar.slider('Conversational memory length:', 1, 10, value = 5)
+# Streamlit Title
+st.title("Groq Chat App 🤖💬")
 
-    memory = ConversationBufferWindowMemory(k=conversational_memory_length)
+# Sidebar: Model Selection
+st.sidebar.title('Select an LLM 🔍')
+model = st.sidebar.selectbox(
+    'Choose a model 🤖',
+    ['llama-3.3-70b-versatile', 'mixtral-8x7b-32768', 'llama-3.1-8b-instant'],
+    format_func=lambda x: f"{x} 🧠"
+)
 
-    user_question = st.text_area("Ask a question 🧐:")
+# Conversational Memory Length
+conversational_memory_length = st.sidebar.slider('Conversational memory length:', 1, 50, value=10)
 
-    # session state variable
-    if 'chat_history' not in st.session_state:
-        st.session_state.chat_history=[]
-    else:
-        for message in st.session_state.chat_history:
-            memory.save_context({'input': message['human']}, {'output': message['AI']})
+# Initialize Memory
+memory = ConversationBufferWindowMemory(k=conversational_memory_length)
 
-    # Initialize Groq Langchain chat object and conversation
-    groq_chat = ChatGroq(
-        groq_api_key=groq_api_key, 
-        model_name=model
-    )
+# User Input Box
+user_question = st.text_area("Ask a question 🧐:")
 
-    conversation = ConversationChain(
-        llm=groq_chat,
-        memory=memory
-    )
+# Initialize Chat History
+if 'chat_history' not in st.session_state:
+    st.session_state.chat_history = []
+else:
+    for message in st.session_state.chat_history:
+        memory.save_context({'input': message['human']}, {'output': message['AI']})
 
-    submit_button = st.button(label='Ask Question ❓')
+# Initialize ChatGroq Model
+groq_chat = ChatGroq(
+    groq_api_key=groq_api_key,  # ✅ Fix: Now the API key is properly loaded
+    model_name=model
+)
 
-    if submit_button and user_question:
-        with st.spinner('Thinking... 🤔'):
-            response = conversation(user_question)
-            message = {'human': user_question, 'AI': response['response']}
-            st.session_state.chat_history.append(message)
-            st.write("Chatbot 🤖:", response['response'])
+# Create Conversation Chain
+conversation = ConversationChain(
+    llm=groq_chat,
+    memory=memory
+)
 
-if __name__ == "__main__":
-    main()
+# Submit Button
+submit_button = st.button(label='Ask Question ❓')
+
+if submit_button and user_question:
+    with st.spinner('Thinking... 🤔'):
+        response = conversation.run(user_question)  # ✅ Fix: Response is a string
+        message = {'human': user_question, 'AI': response}
+
+        # Append to Chat History
+        st.session_state.chat_history.append(message)
+
+        # Display Chatbot Response
+        st.write("Chatbot 🤖:", response)  # ✅ Fix: Removed ['response']
+
