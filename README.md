@@ -3,7 +3,7 @@
 
 ### **Groq Chat App 🧠💬**  
 
-A lightweight AI-powered chatbot built with Streamlit, LangChain, and Groq API. This application enables real-time conversations using powerful LLMs like Llama-3.3-70B-Versatile and Mixtral-8x7b-32768, with adjustable memory length for better contextual continuity. Users can customize how many past interactions the chatbot remembers, improving conversational flow.
+A lightweight AI-powered chatbot built with **Streamlit, LangChain, and Groq API**. This application enables real-time conversations using powerful LLMs like** Llama-3.3-70B-Versatile** and **Mixtral-8x7b-32768**, with **adjustable memory length for better contextual continuity**. Users can customize how many past interactions the chatbot remembers, improving conversational flow.
 
 ## **🚀 Features**  
 ✔️ **Real-Time AI Conversations** – Interact with state-of-the-art LLMs via the Groq API.  
